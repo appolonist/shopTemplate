@@ -1,4 +1,5 @@
 require('dotenv').config();
+const webpack = require('webpack');
 const merge = require("webpack-merge");
 const parts = require("./webpack.parts");
 const path = require("path");
@@ -14,6 +15,7 @@ const PATHS = {
 
 const commonConfig = merge([{
     plugins: [
+        new webpack.HashedModuleIdsPlugin(),
         new ErrorOverlayPlugin(),
         new CleanWebpackPlugin(),
         new HtmlWebpackPlugin({
@@ -36,12 +38,37 @@ const commonConfig = merge([{
             ],
         })],
     devtool: 'cheap-module-source-map',
-    entry: './src/index.js',
+    entry: {
+        main: path.resolve(__dirname, 'src/index.js'),
+        ProductList: path.resolve(__dirname, 'src/components/ProductList.js'),
+        Details: path.resolve(__dirname, 'src/components/Details.js')
+    },
     output: {
-        filename: '[name].bundle.js',
         path: path.resolve(__dirname, 'dist'),
+        filename: '[name].[hash].js',
         publicPath: '/'
 
+    },
+    optimization: {
+        runtimeChunk: 'single',
+        splitChunks: {
+            chunks: 'all',
+            maxInitialRequests: Infinity,
+            minSize: 0,
+            cacheGroups: {
+                vendor: {
+                    test: /[\\/]node_modules[\\/]/,
+                    name(module) {
+                        // get the name. E.g. node_modules/packageName/not/this/part.js
+                        // or node_modules/packageName
+                        const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
+
+                        // npm package names are URL-safe, but some servers don't like @ symbols
+                        return `npm.${packageName.replace('@', '')}`;
+                    },
+                },
+            },
+        },
     }
 }]);
 
@@ -50,6 +77,7 @@ const productionConfig = merge([
         use: ["css-loader", parts.autoprefix()]
     }),
     parts.loadJavaScript(),
+    parts.optimizeImages(),
     parts.loadImages({
         options: {
             limit: 10 * 1024,

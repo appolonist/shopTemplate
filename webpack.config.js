@@ -44,7 +44,7 @@ const commonConfig = merge([{
         Details: path.resolve(__dirname, 'src/components/Details.js')
     },
     output: {
-        path: path.resolve(__dirname, 'dist'),
+        path: path.join(__dirname, 'dist'),
         filename: '[name].[hash].js',
         publicPath: '/'
 

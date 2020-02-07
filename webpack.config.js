@@ -32,7 +32,7 @@ const commonConfig = merge([{
             crossorigin: 'use-credentials', //can be null, use-credentials or anonymous
             icons: [
                 {
-                    src: PATHS.app + "\\favicon.png",
+                    src: path.resolve(__dirname, 'src/favicon.png'),
                     sizes: [16, 24, 32, 64, 144, 512] // multiple sizes
                 }
             ],

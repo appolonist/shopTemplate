@@ -114,11 +114,22 @@ exports.loadImages = ({ include, exclude, options } = {}) => ({
                 test: /\.(png|jpg)$/,
                 include: /img/,
                 exclude,
-                use: {
-                    loader: "url-loader",
+                use: [{
+                    loader: "file-loader",
                     options,
                 },
-            },
+                {
+                    loader: 'image-webpack-loader',
+                    options: {
+                        bypassOnDebug: true, // webpack@1.x
+                        disable: true, // webpack@2.x and newer
+                        pngquant: {
+                            quality: [0.65, 0.90],
+                            speed: 4
+                        }
+                    }
+                }]
+            }
         ],
     },
 });

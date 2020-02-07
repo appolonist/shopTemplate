@@ -111,7 +111,7 @@ exports.loadImages = ({ include, exclude, options } = {}) => ({
     module: {
         rules: [
             {
-                test: /\.(png|jpg)$/,
+                test: /\.(gif|png|jpe?g|svg)$/i,
                 include: /img/,
                 exclude,
                 use: [{
@@ -123,12 +123,28 @@ exports.loadImages = ({ include, exclude, options } = {}) => ({
                     options: {
                         bypassOnDebug: true, // webpack@1.x
                         disable: true, // webpack@2.x and newer
+                        optipng: {
+                            enabled: true
+                        },
                         pngquant: {
                             quality: [0.65, 0.90],
                             speed: 4
+                        },
+                        mozjpeg: {
+                            progressive: true,
+                            quality: 65
+                        },
+                        gifsicle: {
+                            interlaced: false
+                        },
+                        webp: {
+                            quality: 75
                         }
                     }
-                }]
+                }],
+                resolve: {
+                    extensions: ['.js', '.jsx', '.scss', '.gif', '.png', '.jpg', '.jpeg', '.svg']
+                }
             }
         ],
     },
